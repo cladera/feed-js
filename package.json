@@ -1,0 +1,31 @@
+{
+  "name": "jquery.feed",
+  "version": "0.0.0",
+  "description": "Commends and Questions jQuery UI widget",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cladera/feed-js.git"
+  },
+  "keywords": [
+    "jquery",
+    "ui",
+    "feed",
+    "javascript"
+  ],
+  "author": "Carlos Galan Cladera <cgcaldera@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cladera/feed-js/issues"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-jshint": "~0.6.3",
+    "grunt-contrib-nodeunit": "~0.2.0",
+    "grunt-contrib-uglify": "~0.2.2",
+    "grunt-contrib-cssmin": "~0.6.2",
+    "grunt-contrib-concat": "~0.3.0"
+  }
+}

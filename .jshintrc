@@ -1,0 +1,15 @@
+{
+    "curly" : true,
+    "eqnull" : true,
+    "eqeqeq" : true,
+    "undef" : true,
+    "predef" : [],
+    "globals" : {
+            "jQuery" : true,
+            "console":true,
+            "document":true,
+            "$":true,
+            "window":true,
+	    "Feed":true
+    }
+}
