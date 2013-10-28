@@ -5,6 +5,7 @@
     "undef" : true,
     "predef" : [],
     "globals" : {
+            "setTimeout": true,
             "jQuery" : true,
             "console":true,
             "document":true,
