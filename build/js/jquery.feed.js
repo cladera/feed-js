@@ -4,17 +4,17 @@ var Feed = function(options, context){
     this.context = context;
     this.options = options;
     this.running = false;
-    console.log("Loading source...");
-    console.log("Source typeof: "+ typeof this.options.source);
+    this.lastCommentId = 0;
+    this.comments = [];
     if(typeof this.options.source === "object"){
-        console.log("Source array");
         //Render comments
         $.each(this.options.source, function(key, comment){
             self.add(comment);
         });
     }else if(typeof this.options.source === "string") {
-        this.running = true;
-        self._get();
+        if(this.options.auto){
+            self.start();
+        }
     }else {
         console.error("Invalid source type");
     }
@@ -23,20 +23,37 @@ var Feed = function(options, context){
 
 Feed.prototype.add = function(comment){
     var box = $('<div class="comment"></div>');
-    box.append('<div class="comment author">'+comment.author || ''+'</div>');
-    box.append('<div class="comment body">'+comment.body || ''+'</div>');
+    box.append('<div class="author">' +
+        '<span class="name">'+comment.author.name+'</span> <span class="email">&#60'+comment.author.email+'&#62</span>' +
+        '</div>');
+    box.append('<div class="datetime">'+this.options.renderDate.call(this, comment.datetime)+'</div>');
+    box.append('<div class="body">'+comment.body || ''+'</div>');
     box.hide();
     this.context.prepend(box);
     box.fadeIn('slow');
+    comment.context = box;
+    this.comments.push(comment);
+    if(comment.id > this.lastCommentId){
+        this.lastCommentId = comment.id;
+    }
     return this;
+};
+Feed.prototype.refreshDates = function(){
+    var self = this;
+    $.each(self.comments, function(i, comment){
+        comment.context.find('.datetime').html(self.options.renderDate.call(self, comment.datetime));
+    });
 };
 Feed.prototype.refresh = function(){
     this._get();
 };
-Feed.prototype.pause = function(){
+Feed.prototype.stop = function(){
     this.running = false;
 };
-Feed.prototype.resume = function(){
+Feed.prototype.start = function(){
+    if(this.running === true){
+        return;
+    }
     this.running = true;
     this._get();
 };
@@ -45,12 +62,27 @@ Feed.prototype._get = function(){
         var self = this;
         $.ajax({
             url: self.options.source,
-            dataType: 'json'
-        }).done(function(feed){
-            $.each(feed, function(key, comment){
-                self.add(comment);
-            });
+            dataType: 'json',
+            data: self.options.idFilter+'='+self.lastCommentId,
+        })
+        .done(function(feed){
+            if(feed.length > 0){
+                $.each(feed, function(key, comment){
+                    self.add(comment);
+                });
+            }
+            self.refreshDates();
             if(self.running && self.options.refreshDelay > 0){
+                setTimeout(function(){
+                    if(self.running){
+                        self._get();
+                    }
+                },self.options.refreshDelay*1000);
+            }
+        })
+        .error(function(resp){
+            self.context.trigger('error');
+            if(!self.options.haltOnError && self.running && self.options.refreshDelay > 0){
                 setTimeout(function(){
                     if(self.running){
                         self._get();
@@ -62,8 +94,14 @@ Feed.prototype._get = function(){
 };
 $.widget("ui.feed", {
     options: {
+        renderDate: function(datetime){
+            return datetime;
+        },
+        auto: false,
+        refreshDelay: 0,
         source: [],
-        refreshDelay: 0
+        idFilter: 'since',
+        haltOnError: true
     },
     _create: function(){
         this.feed = new Feed(this.options, this.element);
@@ -79,11 +117,11 @@ $.widget("ui.feed", {
     refresh: function(){
         this.feed.refresh();
     },
-    pause: function(){
-        this.feed.pause();
+    start: function(){
+        this.feed.start();
     },
-    resume: function(){
-        this.feed.resume();
+    stop: function(){
+        this.feed.stop();
     }
 });
 })(jQuery);

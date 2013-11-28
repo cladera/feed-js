@@ -1,7 +1,13 @@
 $.widget("ui.feed", {
     options: {
+        renderDate: function(datetime){
+            return datetime;
+        },
+        auto: false,
+        refreshDelay: 0,
         source: [],
-        refreshDelay: 0
+        idFilter: 'since',
+        haltOnError: true
     },
     _create: function(){
         this.feed = new Feed(this.options, this.element);
@@ -17,10 +23,10 @@ $.widget("ui.feed", {
     refresh: function(){
         this.feed.refresh();
     },
-    pause: function(){
-        this.feed.pause();
+    start: function(){
+        this.feed.start();
     },
-    resume: function(){
-        this.feed.resume();
+    stop: function(){
+        this.feed.stop();
     }
 });

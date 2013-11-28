@@ -1,6 +1,6 @@
 .feed {
     padding: 5px;
-    background-color: #e5e5e5;
+    background-color: rgba(255,255,255,0.5);
     font-family: sans-serif;
 }
 .feed > .comment
@@ -10,7 +10,25 @@
     margin: 5px;
     box-shadow: 1px 1px 2px rgba(0,0,0,.3);
 }
-.comment .author
+.comment > .author
 {
     margin-bottom: 10px;
+    float: left;
+}
+.comment > .author > .name
+{
+    font-weight: bold;
+}
+.comment > .author > .email
+{
+    color: #3f3f3f;
+}
+.comment > .datetime
+{
+    float: right;
+    font-size: 0.8em;
+    color: #d3d3d3;
+}
+.comment > .body{
+    clear: both;
 }
